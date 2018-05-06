@@ -58,5 +58,9 @@ class TestAnim3(Anim):
     def getPix(self, ringindex: int, ledindex: int, time: float, dt: float):
         if ledindex == 0:
             return [1, 0, 0]
+        elif ledindex == self.ledcount - 1:
+            return [0, 1, 0]
+        elif ledindex == self.ledcount - 2:
+            return [0, 0, 1]
         else:
             return [0, 0, 0]

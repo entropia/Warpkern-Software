@@ -6,7 +6,7 @@ from typing import List
 import random
 
 def floatToByte(val: float) -> int:
-    return max(0, min(int(float*255 + random.random() - 0.5), 255)) # Convert float to byte + temporal dithering
+    return max(0, min(int(val*255 + random.random() - 0.5), 255)) # Convert float to byte + temporal dithering
 
 class PiPhy(WarpkernPhy):
     def __init__(self):

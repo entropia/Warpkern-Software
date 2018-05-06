@@ -23,4 +23,4 @@ if __name__ == "__main__":
 
     while(True):
         wk.tick()
-        time.sleep(1)
+        time.sleep(0.0166)    # 60 FPS

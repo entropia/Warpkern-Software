@@ -34,7 +34,7 @@ class PiPhy(WarpkernPhy):
             dataout = bytedata[0:4000]
             wiringpi.wiringPiSPIDataRW(0, bytes(dataout))
             bytedata = bytedata[4000:]
-        wiringpi.wiringPiSPIDataRW(0, bytedata)  # write the last chunk
+        wiringpi.wiringPiSPIDataRW(0, bytes(bytedata))  # write the last chunk
 
         print("Write: %s" % (time() - t))
         t = time()

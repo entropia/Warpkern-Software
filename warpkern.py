@@ -3,6 +3,11 @@ from typing import List, Type
 from time import time
 import random
 
+
+def floatToByte(val: float) -> int:
+    return max(0, min(int(val * 255), 255))  # Convert float to byte + temporal dithering
+
+
 class WarpkernPhy():
     def pushData(self, data: List[List[float]]):
         print(data)
@@ -87,8 +92,9 @@ class Warpkern():
         for r in range(self.ringcount):
             for l in range(self.ledcount):
                 indx = (r * self.ledcount + l) * 4
-                self.currdata[indx] = 1
-                self.currdata[indx+1:indx+4] = self.currentAnim.getPix(r, l, self.time, self.dt)
+                self.currdata[indx] = 255
+                pix = self.currentAnim.getPix(r, l, self.time, self.dt)
+                self.currdata[indx+1:indx+4] = [floatToByte(pix[0]), floatToByte(pix[1]), floatToByte(pix[2])]
         print("Gen Pix: %s" % (time() - self.time))
         self.time = time()
         ## We're in transition

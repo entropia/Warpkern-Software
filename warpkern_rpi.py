@@ -20,9 +20,9 @@ class PiPhy(WarpkernPhy):
 
         for i in range(len(data)//3):
             bytedata += [255,
-                        floatToByte(data[i+2]),
-                        floatToByte(data[i+1]),
-                        floatToByte(data[i])]
+                        floatToByte(data[i*3+2]),
+                        floatToByte(data[i*3+1]),
+                        floatToByte(data[i*3])]
 
         for i in range(int(math.ceil(len(bytedata)/8))):
             bytedata.append(1)  # Add padding at end

@@ -1,6 +1,7 @@
 import argparse
 
 from warpkern import Warpkern, WarpkernPhy
+from warpkern_rpi import PiPhy
 
 from anims import *
 
@@ -19,7 +20,7 @@ if __name__ == "__main__":
     if args.debug:
         wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, TestAnim2, TestAnim3], WarpkernPhy() , args.verbose, args.debug)
     else:
-        wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, TestAnim2, TestAnim3], WarpkernPhy(), args.verbose, False)
+        wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, TestAnim2, TestAnim3], PiPhy(), args.verbose, False)
 
     while(True):
         wk.tick()

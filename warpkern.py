@@ -42,9 +42,9 @@ class Warpkern():
         self.transitionEnd = 0       # Endtime of transition
         self.nextTransitionAt = 0    # When next transition shall begin
 
-        self.currdata = [] * (self.ringcount * self.ledcount * 4)
-        self.nextdata = [] * (self.ringcount * self.ledcount * 4)
-        self.mixdata = [] * (self.ringcount * self.ledcount * 4)
+        self.currdata = [0] * (self.ringcount * self.ledcount * 4)
+        self.nextdata = [0] * (self.ringcount * self.ledcount * 4)
+        self.mixdata = [0] * (self.ringcount * self.ledcount * 4)
 
     def startTransition(self):
         self.transitionStart = self.time

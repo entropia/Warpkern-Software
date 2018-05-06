@@ -83,7 +83,7 @@ class Warpkern():
         self.currentAnim.tick(self.time, self.dt)
         for r in range(self.ringcount):
             for l in range(self.ledcount):
-                indx = r * self.ledcount + l
+                indx = (r * self.ledcount + l) * 3
                 self.currdata[indx:indx+3] = self.currentAnim.getPix(r, l, self.time, self.dt)
 
         ## We're in transition

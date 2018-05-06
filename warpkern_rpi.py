@@ -7,13 +7,13 @@ import random
 import math
 
 def floatToByte(val: float) -> int:
-    return max(0, min(int(val*255 + (random.random() - 0.5)*0.95), 255)) # Convert float to byte + temporal dithering
+    return max(0, min(int(val*255), 255)) # Convert float to byte + temporal dithering
 
 class PiPhy(WarpkernPhy):
     def __init__(self):
         wiringpi.wiringPiSetup()
 
-        wiringpi.wiringPiSPISetup(0, 5000000)
+        wiringpi.wiringPiSPISetup(0, 4800000)
 
     def pushData(self, data: List[List[float]]):
         bytedata = [0, 0, 0, 0]     # Startframe

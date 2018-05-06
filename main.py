@@ -23,6 +23,7 @@ if __name__ == "__main__":
         wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, TestAnim2, TestAnim3], PiPhy(), args.verbose, False)
 
     while(True):
+        print("\nFrame start")
         a = time.time()
         wk.tick()
-        print(time.time() - a)
+        print("Tick: %s" % (time.time() - a))

@@ -75,17 +75,21 @@ class Warpkern():
                 print("TRANSITION END:")
                 print("  Next: %s (in %s)" % (self.nextTransitionAt, self.nextTransitionAt - self.time))
 
+        print("End transition: %s" % (time() - self.time))
+        self.time = time()
         ## Start transition
         if self.time >= self.nextTransitionAt and self.time > self.transitionEnd:
             self.startTransition()
-
+        print("End transition: %s" % (time() - self.time))
+        self.time = time()
         # Generate Pixeldata
         self.currentAnim.tick(self.time, self.dt)
         for r in range(self.ringcount):
             for l in range(self.ledcount):
                 indx = (r * self.ledcount + l) * 3
                 self.currdata[indx:indx+3] = self.currentAnim.getPix(r, l, self.time, self.dt)
-
+        print("Gen Pix: %s" % (time() - self.time))
+        self.time = time()
         ## We're in transition
         """if self.transitionStart <= self.time < self.transitionEnd and self.nextAnim is not None:
             # Generate pixeldata for next anim
@@ -107,3 +111,5 @@ class Warpkern():
             self.phy.pushData(mixdata)
         else:   # Not in transition"""
         self.phy.pushData(self.currdata)
+        print("Push data: %s" % (time() - self.time))
+        self.time = time()

@@ -4,6 +4,7 @@ import wiringpi
 from typing import List
 
 import random
+import math
 
 def floatToByte(val: float) -> int:
     return max(0, min(int(val*255 + (random.random() - 0.5)*0.95), 255)) # Convert float to byte + temporal dithering
@@ -21,6 +22,9 @@ class PiPhy(WarpkernPhy):
                         floatToByte(pix[0]),
                         floatToByte(pix[1]),
                         floatToByte(pix[2])]
+
+        for i in range(int(math.ceil(len(bytedata)/8))):
+            bytedata.append(1)  # Add padding at end
 
         while(len(bytedata) > 1000):    # Write in chuncks of 1000
             dataout = bytedata[0:1000]

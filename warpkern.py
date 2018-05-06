@@ -42,9 +42,9 @@ class Warpkern():
         self.transitionEnd = 0       # Endtime of transition
         self.nextTransitionAt = 0    # When next transition shall begin
 
-        self.currdata = [] * (self.ringcount * self.ledcount * 3)
-        self.nextdata = [] * (self.ringcount * self.ledcount * 3)
-        self.mixdata = [] * (self.ringcount * self.ledcount * 3)
+        self.currdata = [] * (self.ringcount * self.ledcount * 4)
+        self.nextdata = [] * (self.ringcount * self.ledcount * 4)
+        self.mixdata = [] * (self.ringcount * self.ledcount * 4)
 
     def startTransition(self):
         self.transitionStart = self.time
@@ -86,8 +86,9 @@ class Warpkern():
         self.currentAnim.tick(self.time, self.dt)
         for r in range(self.ringcount):
             for l in range(self.ledcount):
-                indx = (r * self.ledcount + l) * 3
-                self.currdata[indx:indx+3] = self.currentAnim.getPix(r, l, self.time, self.dt)
+                indx = (r * self.ledcount + l) * 4
+                self.currdata[indx] = 1
+                self.currdata[indx+1:indx+4] = self.currentAnim.getPix(r, l, self.time, self.dt)
         print("Gen Pix: %s" % (time() - self.time))
         self.time = time()
         ## We're in transition

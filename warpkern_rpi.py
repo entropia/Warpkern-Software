@@ -19,13 +19,9 @@ class PiPhy(WarpkernPhy):
 
     def pushData(self, data: List[float]):
         t = time()
-        bytedata = [0, 0, 0, 0]     # Startframe
+        bytedata = [0, 0, 0, 0] + data    # Startframe
 
-        for i in range(len(data)//3):
-            bytedata += [255,
-                         floatToByte(data[i*3+2]),
-                         floatToByte(data[i*3+1]),
-                         floatToByte(data[i*3])]
+        bytedata = map(floatToByte, bytedata)
 
         print("Convert data: %s" % (time() - t))
         t = time()

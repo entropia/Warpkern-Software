@@ -21,7 +21,7 @@ class PiPhy(WarpkernPhy):
         t = time()
         bytedata = [0, 0, 0, 0] + data    # Startframe
 
-        bytedata = map(floatToByte, bytedata)
+        bytedata = list(map(floatToByte, bytedata))
 
         print("Convert data: %s" % (time() - t))
         t = time()

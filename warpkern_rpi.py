@@ -13,15 +13,15 @@ class PiPhy(WarpkernPhy):
     def __init__(self):
         wiringpi.wiringPiSetup()
 
-        wiringpi.wiringPiSPISetup(0, 10000000)
+        wiringpi.wiringPiSPISetup(0, 5000000)
 
     def pushData(self, data: List[List[float]]):
         bytedata = [0, 0, 0, 0]     # Startframe
         for pix in data:
             bytedata += [255,
-                        floatToByte(pix[0]),
+                        floatToByte(pix[2]),
                         floatToByte(pix[1]),
-                        floatToByte(pix[2])]
+                        floatToByte(pix[0])]
 
         for i in range(int(math.ceil(len(bytedata)/8))):
             bytedata.append(1)  # Add padding at end

@@ -42,6 +42,10 @@ class Warpkern():
         self.transitionEnd = 0       # Endtime of transition
         self.nextTransitionAt = 0    # When next transition shall begin
 
+        self.currdata = [] * (self.ringcount * self.ledcount * 3)
+        self.nextdata = [] * (self.ringcount * self.ledcount * 3)
+        self.mixdata = [] * (self.ringcount * self.ledcount * 3)
+
     def startTransition(self):
         self.transitionStart = self.time
         self.transitionEnd = self.time + 10 # 10 Seconds transition time
@@ -56,9 +60,6 @@ class Warpkern():
             print("  NextAnim: %s" % self.nextAnim)
 
     def tick(self):
-        currdata = []   # type: List[List[float]]    # Pixel data from current animation
-        nextdata = []   # type: List[List[float]]    # If in transition, we also get data from next animation
-
         self.dt = time() - self.time
         self.time = time()
 
@@ -82,15 +83,16 @@ class Warpkern():
         self.currentAnim.tick(self.time, self.dt)
         for r in range(self.ringcount):
             for l in range(self.ledcount):
-                currdata.append(self.currentAnim.getPix(r, l, self.time, self.dt))
+                indx = r * self.ledcount + l
+                self.currdata[indx:indx+3] = self.currentAnim.getPix(r, l, self.time, self.dt)
 
         ## We're in transition
-        if self.transitionStart <= self.time < self.transitionEnd and self.nextAnim is not None:
+        """if self.transitionStart <= self.time < self.transitionEnd and self.nextAnim is not None:
             # Generate pixeldata for next anim
             self.nextAnim.tick(self.time, self.dt)
             for r in range(self.ringcount):
                 for l in range(self.ledcount):
-                    nextdata.append(self.nextAnim.getPix(r, l, self.time, self.dt))
+                    self.nextdata.append(self.nextAnim.getPix(r, l, self.time, self.dt))
 
             # Linearly mix currdata and nextdata into mixdata
             alpha = (self.time - self.transitionStart)/(self.transitionEnd - self.transitionStart)
@@ -103,5 +105,5 @@ class Warpkern():
                 mixdata.append(lerp3(currdata[i], nextdata[i], alpha))
 
             self.phy.pushData(mixdata)
-        else:   # Not in transition
-            self.phy.pushData(currdata)
+        else:   # Not in transition"""
+        self.phy.pushData(self.currdata)

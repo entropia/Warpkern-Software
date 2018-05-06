@@ -23,5 +23,6 @@ if __name__ == "__main__":
         wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, TestAnim2, TestAnim3], PiPhy(), args.verbose, False)
 
     while(True):
+        a = time.time()
         wk.tick()
-        time.sleep(0.0166)    # 60 FPS
+        print(time.time() - a)

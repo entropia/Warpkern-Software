@@ -20,7 +20,7 @@ if __name__ == "__main__":
     if args.debug:
         wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, WarpCore], WarpkernPhy() , args.verbose, args.debug)
     else:
-        wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, WarpCore], PiPhy(), args.verbose, False)
+        wk = Warpkern(args.ringcount, args.ledcount, [WarpCore], PiPhy(), args.verbose, False)
 
     while(True):
         print("\nFrame start")

@@ -20,9 +20,4 @@ class PiPhy(WarpkernPhy):
         wiringpi.wiringPiSPISetup(0, 4800000)
 
     def pushData(self, data: np.array):
-        bytedata = data.tobytes()
-
-        while(len(bytedata) > 4000):    # Write in chuncks of 1000
-            wiringpi.wiringPiSPIDataRW(0, bytedata[0:4000])
-            bytedata = bytedata[4000:]
-        wiringpi.wiringPiSPIDataRW(0, bytedata)  # write the last chunk
+        wiringpi.wiringPiSPIDataRW(0, data.tobytes())  # write the last chunk

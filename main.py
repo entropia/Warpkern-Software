@@ -25,5 +25,5 @@ if __name__ == "__main__":
         #print("\nFrame start")
         a = time.time()
         wk.tick()
-        time.sleep(0)
+        time.sleep(0.0)
         #print("Tick: %s" % (time.time() - a))

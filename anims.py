@@ -78,7 +78,7 @@ class WarpCore(Anim):
         self.data = np.transpose(self.data)
         for r in range(self.ringcount):
             speed = 1.
-            anim = np.arange(self.ledcount) - self.ledcount//2 + (time * time)
+            anim = np.arange(self.ledcount) - self.ledcount//2 + (time)
             indxs = self.ledcount * r
             indxe = self.ledcount * (r + 1)
 

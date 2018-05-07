@@ -24,9 +24,16 @@ class PiPhy(WarpkernPhy):
 
         wiringpi.wiringPiSPISetup(0, 4800000)
 
+        self.thread = None
+
     def pushData(self, data: np.array):
-        t = Thread(target = writeData, args=(data.tobytes()))
-        t.start()
+        if self.thread is not None:
+            while(self.thread.is_alive()):
+                pass
+            self.thread = None
+
+        self.thread = Thread(target=writeData, args=(data.tobytes(), ))
+        self.thread.start()
 
 
 

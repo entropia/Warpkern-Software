@@ -38,16 +38,23 @@ int wiringPiSPISetup     (int channel, int speed) ;
 """)
         self._wiringpi = self.ffi.dlopen("/usr/lib/libwiringPi.so")
 
+        self.chan = self.ffi.cast("int", 0)
+        self.dlen = None
+        self.dataptr = None
+
         self._wiringpi.wiringPiSetup()
-        self._wiringpi.wiringPiSPISetip(self.ffi.cast("int", 0), self.ffi.cast("int", 4500000))
+        self._wiringpi.wiringPiSPISetup(self.chan, self.ffi.cast("int", 4500000))
+
 
     def pushData(self, data: np.array):
         #wiringpi._wiringpi.wiringPiSPIDataRW(0, data.ctypes.data)
 
-        chan = self.ffi.cast("int", 0)
-        dataptr = self.ffi.cast("char*", data.ctypes.data)
-        dlen = self.ffi.cast("int", len(data))
-        self._wiringpi.wiringPiSPIDataRW(chan, dataptr, dlen)
+        if self.dlen is None:
+            self.dlen = self.ffi.cast("int", len(data))
+        if self.dataptr is None:
+            self.datapr = self.ffi.cast("char", data.ctypes.data)
+
+        self._wiringpi.wiringPiSPIDataRW(self.chan, self.dataptr, self.dlen)
 
         """
         if self.thread is not None:

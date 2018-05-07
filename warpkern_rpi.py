@@ -39,9 +39,10 @@ int wiringPiSPISetup     (int channel, int speed) ;
     def pushData(self, data: np.array):
         #wiringpi._wiringpi.wiringPiSPIDataRW(0, data.ctypes.data)
 
-
-        dataptr = self.ffi.cast("uint8_t*", data.ctypes.data)
-        self._wiringpi.wiringPiSPIDataRw(0, dataptr, len(data))
+        chan = self.ffi.cast("int", 0)
+        dataptr = self.ffi.cast("char*", data.ctypes.data)
+        dlen = self.ffi.cast("int", len(data))
+        self._wiringpi.wiringPiSPIDataRW(chan, dataptr, dlen)
 
         """
         if self.thread is not None:

@@ -12,8 +12,6 @@ from threading import Thread
 
 import numpy as np
 
-import os
-
 def writeData(data):
     wiringpi.wiringPiSPIDataRW(0, data)  # write the last chunk
 
@@ -28,20 +26,14 @@ class PiPhy(WarpkernPhy):
 
         self.thread = None
 
-        self.spifd = wiringpi._wiringpi.wiringPiSPIGetFd(0)
-
-
     def pushData(self, data: np.array):
-        os.write(self.spidf, data.tobytes())
-
-        """
         if self.thread is not None:
             while(self.thread.is_alive()):
                 pass
             self.thread = None
 
         self.thread = Thread(target=writeData, args=(data.tobytes(), ))
-        self.thread.start()"""
+        self.thread.start()
 
 
 

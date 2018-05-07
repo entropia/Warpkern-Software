@@ -56,4 +56,7 @@ class Warpkern():
 
         self.outdata[1:self.totalLedCount+1] = self.pixdata
 
+        print("GENDATA: %s" % (time() - self.time))
+
         self.phy.pushData(np.array(self.outdata.clip(0, 1) * 255, np.uint8).flatten())
+

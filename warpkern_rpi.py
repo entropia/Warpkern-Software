@@ -47,23 +47,13 @@ int wiringPiSPISetup     (int channel, int speed) ;
 
 
     def pushData(self, data: np.array):
-        #wiringpi._wiringpi.wiringPiSPIDataRW(0, data.ctypes.data)
-
         if self.dlen is None:
             self.dlen = self.ffi.cast("int", len(data))
         if self.dataptr is None:
-            self.datapr = self.ffi.cast("char", data.ctypes.data)
+            self.dataptr = self.ffi.cast("unsigned char *", data.ctypes.data)
 
         self._wiringpi.wiringPiSPIDataRW(self.chan, self.dataptr, self.dlen)
 
-        """
-        if self.thread is not None:
-            while(self.thread.is_alive()):
-                pass
-            self.thread = None
-
-        self.thread = Thread(target=writeData, args=(data.tobytes(), ))
-        self.thread.start()"""
 
 
 

@@ -5,6 +5,8 @@ import random
 
 import numpy as np
 
+import sys
+
 
 def floatToByte(val: float) -> int:
     return max(0, min(int(val * 255), 255))  # Convert float to byte + temporal dithering
@@ -12,7 +14,7 @@ def floatToByte(val: float) -> int:
 
 class WarpkernPhy():
     def pushData(self, data: List[List[float]]):
-        pass
+        sys.stdout.buffer.write(data.tobytes())
 
 class Anim():
     def tick(self, data: np.array, time: float, dt: float):

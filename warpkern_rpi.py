@@ -10,14 +10,11 @@ from time import time
 
 import numpy as np
 
-def floatToByte(val: float) -> int:
-    return max(0, min(int(val*255), 255)) # Convert float to byte + temporal dithering
+import sys
 
-class PiPhy(WarpkernPhy):
-    def __init__(self):
-        wiringpi.wiringPiSetup()
-
-        wiringpi.wiringPiSPISetup(0, 4800000)
-
-    def pushData(self, data: np.array):
-        wiringpi.wiringPiSPIDataRW(0, data.tobytes())  # write the last chunk
+if __name__ == "__main__":
+    wiringpi.wiringPiSetup()
+    wiringpi.wiringPiSPISetup(0, 4800000)
+    while True:
+        bytedata = sys.stdin.buffer.read(100)
+        wiringpi.wiringPiSPIDataRW(0, bytedata)

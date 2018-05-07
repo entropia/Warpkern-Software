@@ -12,6 +12,8 @@ from threading import Thread
 
 import numpy as np
 
+from cffi import FFI
+
 def writeData(data):
     wiringpi.wiringPiSPIDataRW(0, data)  # write the last chunk
 
@@ -26,8 +28,20 @@ class PiPhy(WarpkernPhy):
 
         self.thread = None
 
+        self.ffi = FFI()
+        self.ffi.cdef("""int wiringPiSPIGetFd     (int channel) ;
+int wiringPiSPIDataRW    (int channel, unsigned char *data, int len) ;
+int wiringPiSPISetupMode (int channel, int speed, int mode) ;
+int wiringPiSPISetup     (int channel, int speed) ;
+""")
+        self._wiringpi = self.ffi.dlopen("/usr/lib/libwiringPi.so")
+
     def pushData(self, data: np.array):
-        wiringpi._wiringpi.wiringPiSPIDataRW(0, data.ctypes.data, len(data))
+        #wiringpi._wiringpi.wiringPiSPIDataRW(0, data.ctypes.data)
+
+
+        dataptr = self.ffi.cast("uint8_t*", data.ctypes.data)
+        self._wiringpi.wiringPiSPIDataRw(0, dataptr, len(data))
 
         """
         if self.thread is not None:

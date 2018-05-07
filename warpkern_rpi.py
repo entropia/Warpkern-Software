@@ -22,19 +22,24 @@ def floatToByte(val: float) -> int:
 
 class PiPhy(WarpkernPhy):
     def __init__(self):
-        wiringpi.wiringPiSetup()
+        #wiringpi.wiringPiSetup()
 
-        wiringpi.wiringPiSPISetup(0, 4800000)
+        #wiringpi.wiringPiSPISetup(0, 4800000)
 
         self.thread = None
 
         self.ffi = FFI()
-        self.ffi.cdef("""int wiringPiSPIGetFd     (int channel) ;
+        self.ffi.cdef("""
+int wiringPiSetup (void) ;
+int wiringPiSPIGetFd     (int channel) ;
 int wiringPiSPIDataRW    (int channel, unsigned char *data, int len) ;
 int wiringPiSPISetupMode (int channel, int speed, int mode) ;
 int wiringPiSPISetup     (int channel, int speed) ;
 """)
         self._wiringpi = self.ffi.dlopen("/usr/lib/libwiringPi.so")
+
+        self._wiringpi.wiringPiSetup()
+        self._wiringpi.wiringPiSPISetip(self.ffi.cast("int", 0), self.ffi.cast("int", 4500000))
 
     def pushData(self, data: np.array):
         #wiringpi._wiringpi.wiringPiSPIDataRW(0, data.ctypes.data)

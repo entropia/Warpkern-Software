@@ -39,11 +39,19 @@ class Warpkern():
         self.totalLedCount = self.ringcount * self.ledcount
         self.totalByteCount = self.totalLedCount * 4 + 1 + self.totalLedCount//8
         self.pixdata = np.ones((self.totalLedCount, 4))
-        self.outdata = np.ones((self.totalByteCount, 4))
+        self.outdata = np.ones((self.totalLedCount+1, 4))
         self.outdata[0][0] = 0
         self.outdata[0][1] = 0
         self.outdata[0][2] = 0
         self.outdata[0][3] = 0
+
+        self.powdata = np.ones((self.totalLedCount, 4)) * 8.
+
+        self.dithervec = (np.random.random_sample((self.totalLedCount, 4)) * 0.95 - 0.5) / 255
+        self.dithervec[:, 0] = np.zeros(self.totalLedCount)
+
+    def dither(self):
+        self.dithervec[:,1:4] = (np.random.random_sample((self.totalLedCount, 3)) * 0.95 - 0.5) / 255
 
     def tick(self):
         self.dt = time() - self.time
@@ -54,9 +62,8 @@ class Warpkern():
 
         self.currentAnim.tick(self.pixdata, self.time, self.dt)
 
-        self.outdata[1:self.totalLedCount+1] = self.pixdata
+        self.dither()
 
-        print("GENDATA: %s" % (time() - self.time))
+        self.outdata[1:self.totalLedCount+1] = np.power(self.pixdata, self.powdata) + self.dithervec
 
-        self.phy.pushData(np.array(self.outdata.clip(0, 1) * 255, np.uint8).flatten())
-
+        self.phy.pushData(np.array((self.outdata ).clip(0, 1) * 255, np.uint8).flatten())

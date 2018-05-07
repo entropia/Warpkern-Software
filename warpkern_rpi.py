@@ -7,16 +7,17 @@ import random
 import math
 
 from time import time
-import time
 
 import numpy as np
 
-import sys
+def floatToByte(val: float) -> int:
+    return max(0, min(int(val*255), 255)) # Convert float to byte + temporal dithering
 
-if __name__ == "__main__":
-    wiringpi.wiringPiSetup()
-    wiringpi.wiringPiSPISetup(0, 4800000)
-    while True:
-        bytedata = sys.stdin.buffer.read(100)
-        wiringpi.wiringPiSPIDataRW(0, bytedata)
-        time.sleep(0)
+class PiPhy(WarpkernPhy):
+    def __init__(self):
+        wiringpi.wiringPiSetup()
+
+        wiringpi.wiringPiSPISetup(0, 4800000)
+
+    def pushData(self, data: np.array):
+        wiringpi.wiringPiSPIDataRW(0, data.tobytes())  # write the last chunk

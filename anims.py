@@ -1,6 +1,6 @@
 from warpkern import Anim
 
-
+import numpy as np
 
 class TestAnim1(Anim):
     def __init__(self, ringcount: int, ledcount: int):
@@ -9,16 +9,13 @@ class TestAnim1(Anim):
         self.totalLeds = ringcount * ledcount
         self.counter = 0
 
-    def tick(self, time: float, dt: float):
+    def tick(self, data: np.array, time: float, dt: float):
         self.counter += 1
         if self.counter >= self. totalLeds:
             self.counter = 0
 
-    def getPix(self, ringindex: int, ledindex: int, time: float, dt: float):
-        if ringindex * self.ledcount + ledindex == self.counter:
-            return [1, 1, 1]
-        else:
-            return [0, 0, 0]
+        self.data = np.zeros((self.ringcount * self.ledcount, 4))
+        self.data[self.counter] = np.array([1, 1, 1, 1])
 
 class TestAnim2(Anim):
     def __init__(self, ringcount: int, ledcount: int):
@@ -28,7 +25,8 @@ class TestAnim2(Anim):
         self.counter = 0
         self.ringindx = 0
 
-    def tick(self, time: float, dt: float):
+    def tick(self, data: np.array, time: float, dt: float):
+        self.data = data
         self.counter += 1
         if self.counter >= 10:
             self.counter = 0
@@ -36,11 +34,17 @@ class TestAnim2(Anim):
         if self.ringindx > self.ringcount:
             self.ringindx = 0
 
-    def getPix(self, ringindex: int, ledindex: int, time: float, dt: float):
-        if ringindex == self.ringindx:
-            return [1, 0, 0]
-        else:
-            return [0, 0, 0]
+        self.data = np.transpose(self.data)
+        for r in range(self.ringcount):
+            ring = np.arange(self.ledcount)
+            indxs = self.ledcount * r
+            indxe = self.ledcount * (r + 1)
+
+            self.data[1][indxs:indxe] = np.abs(np.sin(ring*np.pi*0.1))
+            self.data[2][indxs:indxe] = np.ones(self.ledcount)
+            self.data[3][indxs:indxe] = np.zeros(self.ledcount)
+
+        self.data = np.transpose(self.data)
 
 class TestAnim3(Anim):
     def __init__(self, ringcount: int, ledcount: int):
@@ -50,17 +54,37 @@ class TestAnim3(Anim):
         self.counter = 0
         self.ringindx = 0
 
-    def tick(self, time: float, dt: float):
+    def tick(self, data: np.array, time: float, dt: float):
         self.counter += 1
         if self.counter >= self. totalLeds:
             self.counter = 0
 
-    def getPix(self, ringindex: int, ledindex: int, time: float, dt: float):
-        if ledindex == 0:
-            return [1, 0, 0]
-        elif ledindex == self.ledcount - 1:
-            return [0, 1, 0]
-        elif ledindex == self.ledcount - 2:
-            return [0, 0, 1]
-        else:
-            return [0, 0, 0]
+class WarpCore(Anim):
+    def __init__(self, ringcount: int, ledcount: int):
+        self.ringcount = ringcount
+        self.ledcount = ledcount
+        self.totalLeds = ringcount * ledcount
+        self.counter = 0
+        self.ringindx = 0
+
+    def tick(self, data: np.array, time: float, dt: float):
+        self.data = data
+        self.counter += 1
+        if self.counter >= 10:
+            self.counter = 0
+            self.ringindx += 1
+        if self.ringindx > self.ringcount:
+            self.ringindx = 0
+
+        self.data = np.transpose(self.data)
+        for r in range(self.ringcount):
+            speed = 1.
+            anim = np.arange(self.ledcount) - self.ledcount//2 + (time * time)
+            indxs = self.ledcount * r
+            indxe = self.ledcount * (r + 1)
+
+            self.data[1][indxs:indxe] = np.sin(anim*np.pi*0.1)
+            self.data[2][indxs:indxe] = np.zeros(self.ledcount)
+            self.data[3][indxs:indxe] = np.zeros(self.ledcount)
+
+        self.data = np.transpose(self.data)

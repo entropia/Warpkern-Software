@@ -18,7 +18,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.debug:
-        wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, TestAnim2, TestAnim3], WarpkernPhy() , args.verbose, args.debug)
+        wk = Warpkern(args.ringcount, args.ledcount, [TestAnim2, WarpCore], WarpkernPhy() , args.verbose, args.debug)
     else:
         wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, TestAnim2, TestAnim3], PiPhy(), args.verbose, False)
 

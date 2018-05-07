@@ -3,6 +3,8 @@ from typing import List, Type
 from time import time
 import random
 
+import numpy as np
+
 
 def floatToByte(val: float) -> int:
     return max(0, min(int(val * 255), 255))  # Convert float to byte + temporal dithering
@@ -10,22 +12,12 @@ def floatToByte(val: float) -> int:
 
 class WarpkernPhy():
     def pushData(self, data: List[List[float]]):
-        print(data)
+        pass
 
 class Anim():
-    def tick(self, time: float, dt: float):
+    def tick(self, data: np.array, time: float, dt: float):
         pass
 
-    def getPix(self, ringindex: int, ledindex: int, time: float, dt: float) -> List[float]:
-        """Fetch single pixel from animation
-
-        :param ringindex: Index of ring (0 is at bottom)
-        :param ledindex: Index of LED along ring
-        :param time: time since start
-        :param dt: time since last frame
-        :return:
-        """
-        pass
 
 class Warpkern():
     def __init__(self, ringcount: int, ledcount: int, anims: List[Type], phy: WarpkernPhy, verbose: bool=False, debug: bool=False):
@@ -39,84 +31,29 @@ class Warpkern():
         self.anims = [x(self.ringcount, self.ledcount) for x in self.animclasses]
 
         self.currentAnim = random.choice(self.anims)    # type: Anim
-        self.nextAnim = self.currentAnim                # type: Anim
 
         self.time = time()
 
-        self.transitionStart = 0     # Starttime of transition
-        self.transitionEnd = 0       # Endtime of transition
-        self.nextTransitionAt = 0    # When next transition shall begin
+        self.nextAnimAt = self.time + 360
 
-        self.currdata = [0] * (self.ringcount * self.ledcount * 4)
-        self.nextdata = [0] * (self.ringcount * self.ledcount * 4)
-        self.mixdata = [0] * (self.ringcount * self.ledcount * 4)
-
-    def startTransition(self):
-        self.transitionStart = self.time
-        self.transitionEnd = self.time + 10 # 10 Seconds transition time
-        if self.debug:
-            self.transitionEnd = self.time + 2
-        self.nextAnim = random.choice(self.anims)  # TODO: prevent same animation being called twice
-        if self.verbose:
-            print("TRANSITION START:")
-            print("  Start: %s" % self.transitionStart)
-            print("  End: %s" % self.transitionEnd)
-            print("  CurrentAnim: %s" % self.currentAnim)
-            print("  NextAnim: %s" % self.nextAnim)
+        self.totalLedCount = self.ringcount * self.ledcount
+        self.totalByteCount = self.totalLedCount * 4 + 1 + self.totalLedCount//8
+        self.pixdata = np.ones((self.totalLedCount, 4))
+        self.outdata = np.ones((self.totalByteCount, 4))
+        self.outdata[0][0] = 0
+        self.outdata[0][1] = 0
+        self.outdata[0][2] = 0
+        self.outdata[0][3] = 0
 
     def tick(self):
         self.dt = time() - self.time
         self.time = time()
 
-        # Anim tracking
-        ## End transition
-        if self.time > self.transitionEnd and self.nextAnim is not None:
-            self.currentAnim = self.nextAnim
-            self.nextAnim = None
-            self.nextTransitionAt = self.time + (360 + random.random() * 180)     # Every 10-15 minutes
-            if self.debug:
-                self.nextTransitionAt = self.time + (360 + random.random() * 180)*0.01  # More quickly for debugging reasons
-            if self.verbose:
-                print("TRANSITION END:")
-                print("  Next: %s (in %s)" % (self.nextTransitionAt, self.nextTransitionAt - self.time))
+        if self.time > self.nextAnimAt:
+            self.currentAnim = random.choice(self.anims)
 
-        print("End transition: %s" % (time() - self.time))
-        self.time = time()
-        ## Start transition
-        if self.time >= self.nextTransitionAt and self.time > self.transitionEnd:
-            self.startTransition()
-        print("End transition: %s" % (time() - self.time))
-        self.time = time()
-        # Generate Pixeldata
-        self.currentAnim.tick(self.time, self.dt)
-        for r in range(self.ringcount):
-            for l in range(self.ledcount):
-                indx = (r * self.ledcount + l) * 4
-                self.currdata[indx] = 255
-                pix = self.currentAnim.getPix(r, l, self.time, self.dt)
-                self.currdata[indx+1:indx+4] = [floatToByte(pix[0]), floatToByte(pix[1]), floatToByte(pix[2])]
-        print("Gen Pix: %s" % (time() - self.time))
-        self.time = time()
-        ## We're in transition
-        """if self.transitionStart <= self.time < self.transitionEnd and self.nextAnim is not None:
-            # Generate pixeldata for next anim
-            self.nextAnim.tick(self.time, self.dt)
-            for r in range(self.ringcount):
-                for l in range(self.ledcount):
-                    self.nextdata.append(self.nextAnim.getPix(r, l, self.time, self.dt))
+        self.currentAnim.tick(self.pixdata, self.time, self.dt)
 
-            # Linearly mix currdata and nextdata into mixdata
-            alpha = (self.time - self.transitionStart)/(self.transitionEnd - self.transitionStart)
-            mixdata = []
-            def lerp3(a, b, x):
-                return [a[0] * (1 - x) + b[0] * x,
-                        a[1] * (1 - x) + b[1] * x,
-                        a[2] * (1 - x) + b[2] * x]
-            for i in range(len(currdata)):
-                mixdata.append(lerp3(currdata[i], nextdata[i], alpha))
+        self.outdata[1:self.totalLedCount+1] = self.pixdata
 
-            self.phy.pushData(mixdata)
-        else:   # Not in transition"""
-        self.phy.pushData(self.currdata)
-        print("Push data: %s" % (time() - self.time))
-        self.time = time()
+        self.phy.pushData(np.array(self.outdata.clip(0, 1) * 255, np.uint8).flatten())

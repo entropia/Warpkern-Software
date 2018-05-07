@@ -7,6 +7,7 @@ import random
 import math
 
 from time import time
+import time
 
 import numpy as np
 
@@ -18,3 +19,4 @@ if __name__ == "__main__":
     while True:
         bytedata = sys.stdin.buffer.read(100)
         wiringpi.wiringPiSPIDataRW(0, bytedata)
+        time.sleep(0)

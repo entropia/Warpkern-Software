@@ -114,6 +114,7 @@ class WibWob(Anim):
         ]
 
         horizdistance = np.abs(np.arange(self.ledcount) - np.ones(self.ledcount)*self.pos[0])
+        horizdistance = np.mod(horizdistance, np.ones(self.ledcount) * self.ledcount)
         horizdistance = np.maximum((np.ones(self.ledcount)*self.horsize - horizdistance)/self.horsize, np.zeros(self.ledcount))
 
         vertdistance = np.abs(np.arange(self.ringcount) - np.ones(self.ringcount)*self.pos[1])
@@ -126,7 +127,8 @@ class WibWob(Anim):
             indxs = self.ledcount * r
             indxe = self.ledcount * (r + 1)
 
-            b = np.power(horizdistance * vertdistance[r], np.ones(self.ledcount) * 4)
+            # * vertdistance[r]
+            b = np.power(horizdistance , np.ones(self.ledcount) * 4)
 
             self.data[1][indxs:indxe] = b*color[0]
             self.data[2][indxs:indxe] = b*color[1]

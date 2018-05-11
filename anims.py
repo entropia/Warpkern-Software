@@ -109,7 +109,7 @@ class WibWob(Anim):
         self.data = data
 
         self.pos = [
-            time % self.ledcount,
+            (time*30) % self.ledcount,
             (math.sin(time)*0.5 + 0.5) * self.ringcount
         ]
 

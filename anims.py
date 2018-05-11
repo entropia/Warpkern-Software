@@ -100,7 +100,7 @@ class WibWob(Anim):
 
         self.vertDistMult = 10
 
-        self.horsize = 20
+        self.horsize = 70
         self.vertsize = 1.5
 
         self.pos = [0, 0]

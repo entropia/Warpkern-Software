@@ -18,9 +18,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.debug:
-        wk = Warpkern(args.ringcount, args.ledcount, [TestAnim1, WarpCore], WarpkernPhy() , args.verbose, args.debug)
+        wk = Warpkern(args.ringcount, args.ledcount, [WibWob], WarpkernPhy() , args.verbose, args.debug)
     else:
-        wk = Warpkern(args.ringcount, args.ledcount, [WarpCore], PiPhy(), args.verbose, False)
+        wk = Warpkern(args.ringcount, args.ledcount, [WarpCore, WibWob], PiPhy(), args.verbose, False)
 
     while(True):
         #print("\nFrame start")

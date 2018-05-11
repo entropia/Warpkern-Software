@@ -2,6 +2,10 @@ from warpkern import Anim
 
 import numpy as np
 
+import math
+
+import colorsys
+
 class TestAnim1(Anim):
     def __init__(self, ringcount: int, ledcount: int):
         self.ringcount = ringcount
@@ -86,6 +90,47 @@ class WarpCore(Anim):
             self.data[1][indxs:indxe] = np.power(np.sin(anim*np.pi), pow)
             self.data[2][indxs:indxe] = np.zeros(self.ledcount)
             self.data[3][indxs:indxe] = np.zeros(self.ledcount)
+
+        self.data = np.transpose(self.data)
+
+class WibWob(Anim):
+    def __init__(self, ringcount: int, ledcount: int):
+        self.ringcount = ringcount
+        self.ledcount = ledcount
+
+        self.vertDistMult = 10
+
+        self.horsize = 20
+        self.vertsize = 1.5
+
+        self.pos = [0, 0]
+
+    def tick(self, data: np.array, time: float, dt: float):
+        self.data = data
+
+        self.pos = [
+            time % self.ledcount,
+            (math.sin(time)*0.5 + 0.5) * self.ringcount
+        ]
+
+        horizdistance = np.abs(np.arange(self.ledcount) - np.ones(self.ledcount)*self.pos[0])
+        horizdistance = np.maximum((np.ones(self.ledcount)*self.horsize - horizdistance)/self.horsize, np.zeros(self.ledcount))
+
+        vertdistance = np.abs(np.arange(self.ringcount) - np.ones(self.ringcount)*self.pos[1])
+        vertdistance = np.maximum((np.ones(self.ringcount)*self.vertsize - vertdistance)/self.horsize, np.zeros(self.ringcount))
+
+        color = colorsys.hsv_to_rgb(time*0.2, 1, 1)
+
+        self.data = np.transpose(self.data)
+        for r in range(self.ringcount):
+            indxs = self.ledcount * r
+            indxe = self.ledcount * (r + 1)
+
+            b = np.power(horizdistance * vertdistance[r], np.ones(self.ledcount) * 4)
+
+            self.data[1][indxs:indxe] = b*color[0]
+            self.data[2][indxs:indxe] = b*color[1]
+            self.data[3][indxs:indxe] = b*color[2]
 
         self.data = np.transpose(self.data)
 

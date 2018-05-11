@@ -59,6 +59,7 @@ class Warpkern():
 
         if self.time > self.nextAnimAt:
             self.currentAnim = random.choice(self.anims)
+            self.nextAnimAt = time() +  self.time + 360 * (1+random.random())
 
         self.currentAnim.tick(self.pixdata, self.time, self.dt)
 

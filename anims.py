@@ -120,7 +120,7 @@ class WibWob(Anim):
         vertdistance = np.abs(np.arange(self.ringcount) - np.ones(self.ringcount)*self.pos[1])
         vertdistance = np.maximum((np.ones(self.ringcount)*self.vertsize - vertdistance)/self.horsize, np.zeros(self.ringcount))
 
-        color = colorsys.hsv_to_rgb(time*0.2, 1, 1)
+        color = colorsys.hsv_to_rgb(time*0.02, 1, 1)
 
         self.data = np.transpose(self.data)
         for r in range(self.ringcount):
@@ -128,7 +128,7 @@ class WibWob(Anim):
             indxe = self.ledcount * (r + 1)
 
             # * vertdistance[r]
-            b = np.power(horizdistance , np.ones(self.ledcount) * 4)
+            b = np.power(horizdistance * vertdistance[r] * 100, np.ones(self.ledcount) * 4)
 
             self.data[1][indxs:indxe] = b*color[0]
             self.data[2][indxs:indxe] = b*color[1]

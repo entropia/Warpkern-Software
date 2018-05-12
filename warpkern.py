@@ -19,6 +19,11 @@ class Anim():
         pass
 
 
+class PrerenderedAnim:
+    def tick(self, time, dt) -> np.array:
+        pass
+
+
 class Warpkern():
     def __init__(self, ringcount: int, ledcount: int, anims: List[Type], phy: WarpkernPhy, verbose: bool=False, debug: bool=False):
         self.ringcount = ringcount
@@ -51,7 +56,7 @@ class Warpkern():
         self.dithervec[:, 0] = np.zeros(self.totalLedCount)
 
     def dither(self):
-        self.dithervec[:,1:4] = (np.random.random_sample((self.totalLedCount, 3)) * 0.95 - 0.5) / 255
+        self.dithervec[:, 1:4] = (np.random.random_sample((self.totalLedCount, 3)) * 0.95 - 0.5) / 255
 
     def tick(self):
         self.dt = time() - self.time
@@ -59,7 +64,7 @@ class Warpkern():
 
         if self.time > self.nextAnimAt:
             self.currentAnim = random.choice(self.anims)
-            self.nextAnimAt = time() +  self.time + 360 * (1+random.random())
+            self.nextAnimAt = time() + self.time + 360 * (1+random.random())
 
         self.currentAnim.tick(self.pixdata, self.time, self.dt)
 
@@ -67,4 +72,28 @@ class Warpkern():
 
         self.outdata[1:self.totalLedCount+1] = np.power(self.pixdata, self.powdata) + self.dithervec
 
-        self.phy.pushData(np.array((self.outdata ).clip(0, 1) * 255, np.uint8).flatten())
+        self.phy.pushData(np.array((self.outdata).clip(0, 1) * 255, np.uint8).flatten())
+
+
+class PrerenderedWarpkern():
+    def __init__(self, anims: List[Type], phy: WarpkernPhy) -> None:
+        self.anims = anims
+        self.phy = phy
+
+        self.currentAnim = random.choice(self.anims)  # type: Anim
+
+        self.time = time()
+
+        self.nextAnimAt = self.time + 360
+
+    def tick(self):
+        self.dt = time() - self.time
+        self.time = time()
+
+        if self.time > self.nextAnimAt:
+            self.currentAnim = random.choice(self.anims)
+            self.nextAnimAt = time() + self.time + 360 * (1+random.random())
+
+        data = self.currentAnim.tick(self.time, self.dt)
+
+        self.phy.pushData(data)
